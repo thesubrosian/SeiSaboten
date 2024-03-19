@@ -399,13 +399,23 @@ class Enemy:
 
     @hp.setter
     def hp(self, value):
-        a = self.bytes_[0x7]
-        # clear 0x7, otherwise the first bit is kept is 1 if so
-        a &= ~(self.hp << 0x7)
-        b = int.from_bytes(self.bytes_[0x8:0x8 + 0x2], byteorder='little')
-        self.bytes_[0x7] = ((a & 0x1FFF) | (value << 0x7)) & 0xFF
-        b = (b & 0xE000) | (value >> 0x1) & 0xFF
-        self.bytes_[0x8:0x8 + 0x2] = b.to_bytes(2, byteorder='little')
+        # Correctly setting 'a' with the MSB of the HP value and 'b' with the rest, without doubling the value.
+        
+        # Clear the MSB of 'a' (which is used for the HP's most significant bit) without affecting other data.
+        a = self.bytes_[0x7] & 0x7F  # Keep the lower 7 bits of 'a' as is.
+        
+        # Correctly assign the MSB of the HP value to 'a'.
+        a |= (value & 0x1) << 7  # Place the least significant bit of the HP value into the MSB of 'a'.
+        
+        # Prepare 'b' by setting its 13 least significant bits from the HP value, shifted right by 1 to align with the getter logic.
+        b = (value >> 1) & 0x1FFF  # Shift right to counteract the getter's left shift, ensuring no doubling occurs.
+        
+        # Update 'a' and 'b' in the bytes array.
+        self.bytes_[0x7] = a  # Set the new value of 'a', with the adjusted MSB.
+        b_bytes = b.to_bytes(2, byteorder='little')  # Convert 'b' to bytes.
+        self.bytes_[0x8:0x8 + 2] = b_bytes  # Set the new value of 'b', properly aligning the bits.
+
+
 
     @pow.setter
     def pow(self, value):

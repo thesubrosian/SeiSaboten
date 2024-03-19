@@ -177,7 +177,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         QtWidgets.QMainWindow.__init__(self)
         Ui_MainWindow.__init__(self)
         self.setupUi(self)
-        self.setWindowTitle(f'SeiSaboten v{__version__}')
+        self.setWindowTitle(f'SeiSaboten v{__version__} Updated by Subrosian (Thanks GPT-4!)')
         icon = iconFromBase64(window_icon)
         self.setWindowIcon(icon)
 
