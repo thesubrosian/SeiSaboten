@@ -285,8 +285,13 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             globals.my_enemyman.set_enemies()
 
             # extend rom
-            globals.my_file = globals.my_file + (b'\x00' * 0x01000000)
+            required_rom_size = 0x01500000  # Could adjust based on the highest data address used (this is just a rough number (which corresponds to 21MB) based on what the size of the original ROM is smaller than)
+            current_rom_size = len(globals.my_file)
+            
+            if current_rom_size < required_rom_size:
+                globals.my_file = globals.my_file + (b'\x00' * 0x01000000)
             # if we save twice, this happens twice... not good
+            # Subrosian edit - now allows for saving multiple times without adding extra space
 
             # extend rom
             globals.my_enemyman.write_monster_book(0x01500000)
